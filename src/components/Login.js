@@ -3,13 +3,13 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import Header from './Header';
-import * as Auth from '../Auth.js';
+import * as Auth from '../utils/Auth';
 
 function Login(props) {  
 
   //const [email, setEmail] = React.useState('');
   //const [password, setPassword] = React.useState('');
-  const [formParams, setFormParams] = React.useState({email: '', pasword: ''});
+  const [formParams, setFormParams] = React.useState({email: '', password: ''});
   const [message, setMessage] = React.useState('');
   const history = useHistory();
 
@@ -58,9 +58,10 @@ const handleSubmit = (e) => {
     return;
   }
   props.handleLogin({ email: formParams.email, password: formParams.password })
-      .catch(err => {
+  
+      {/*.catch(err => {
         setMessage(err.message);
-      });
+      });*/}
 }
           
 

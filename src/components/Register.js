@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import Header from './Header';
-import * as Auth from '../Auth.js';
+import * as Auth from '../utils/Auth';
 import InfoTooltip from './InfoTooltip';
 
 import success from '../images/success-icon.svg';
@@ -10,7 +10,7 @@ import fail from '../images/fail-icon.svg';
 
 
 
-function Register() { 
+function Register(props) { 
 
   //const [email, setEmail] = React.useState('');
   //const [password, setPassword] = React.useState('');
@@ -36,7 +36,7 @@ function Register() {
   //function handleSubmit(evt) {    
    // evt.preventDefault();  
     
-  //  Auth.register(password, email)
+  //  Auth.register(email, password)
   //  .then((res) => {
    //   if(res){ 
    //     return (               
@@ -58,19 +58,15 @@ function Register() {
   //}
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    if (formParams.password) {
-      let { password, email } = formParams;
-      handleRegister({ password, email }).catch(err => {
+    if (formParams.email || formParams.password) {
+      let { email, password } = formParams;
+      props.handleRegister({ email, password })
+      {/*.catch(err => {
         setMessage(err.message);
-      });
+      });*/}
     }
-  }
-  const handleRegister = ({ password, email }) => {
-    return Auth.register(password, email).then(() => {
-      history.push('/sing-in');
-    });
-  }
-     
+  }  
+
     return(
         <>
         <Header />
@@ -79,9 +75,9 @@ function Register() {
             <form onSubmit={handleSubmit} name="register" className="popup__form popup__form-edit-profile" >
               <h2 className="popup__title popup__title_theme_dark">Регистрация</h2>
               <fieldset className="popup__input-container popup__input-container_theme_dark">
-                <input value={formParams.email} onChange={handleChange} className="popup__input popup__input_theme_dark" id="popup__input-email" type="email" name="email"  minLength="2" maxLength="30" placeholder="Email" required/>
+                <input value={formParams.email || ''} onChange={handleChange} className="popup__input popup__input_theme_dark" id="popup__input-email" type="email" name="email"  minLength="2" maxLength="30" placeholder="Email" required/>
                 <span className="popup__input-error popup__input-place-error" ></span>
-                <input value={formParams.password} onChange={handleChange} className="popup__input popup__input_theme_dark" id="popup__input-password" type="password" name="password"  placeholder="Пароль" required/>
+                <input value={formParams.password || ''} onChange={handleChange} className="popup__input popup__input_theme_dark" id="popup__input-password" type="password" name="password"  placeholder="Пароль" required/>
                 <span className="popup__input-error popup__input-link-error" ></span>
               </fieldset>
               <button type="submit" className="popup__submit popup__submit-edit-profile popup__submit_theme_dark">Зарегистрироваться</button>

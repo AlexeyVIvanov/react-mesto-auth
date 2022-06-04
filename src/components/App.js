@@ -18,14 +18,19 @@ import ProtectedRoute from './ProtectedRoute';
 import Register from './Register';
 import InfoTooltip from './InfoTooltip';
 
-import * as Auth from '../Auth.js';
+import * as Auth from '../utils/Auth';
+import success from '../images/success-icon.svg';
 
 function App() {
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const [isLoginAnswerPopupOpen, setIsLoginAnswerPopupOpen] = React.useState(false);
+  const [isLoginAnswerPopupOpen, setIsLoginAnswerPopupOpen] = React.useState({
+    isOpen: false,
+    image: "",
+    title: ""
+  });
   const [selectedCard, setSelectedCard] = React.useState({
     isOpen: false,
     name: "",
@@ -34,7 +39,7 @@ function App() {
 
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
-
+  const [userData, setUserData] = React.useState();
   const [loggedIn, setLoggedIn] = React.useState(false);
 
   const history = useHistory();
@@ -49,17 +54,19 @@ function App() {
       .then((res) => {
         if (res){
                   // здесь можем получить данные пользователя!
-          const userData = {            
-            email: res.email
+          let userData = {            
+            email: res.email            
           }
-                  // поместим их в стейт внутри App.js
-          setLoggedIn({
-            setLoggedIn: true,
-            userData
-          }, () => {
+          
+          setLoggedIn(true);
+          setUserData(userData);
+          //setLoggedIn({
+          //  setLoggedIn: true,
+          //  userData
+          //}, () => {
             //props????????
-            history.push("/dashboard");
-          });
+          //  history.push("/dashboard");
+          //});
         }
       }); 
     }
@@ -71,26 +78,46 @@ function App() {
 
   React.useEffect(() => {
     if (loggedIn) {
-        history.push("/ducks");
+        history.push("/");
     }
-  }, [loggedIn]);
+  }, [loggedIn, history]);
 
-// ???????????
-//  function handleLogin() {    
-//    setLoggedIn(true);
-//    tokenCheck();
-//  }
-const handleLogin = ({ email, password }) => {
-  return Auth.authorize(email, password)
-      .then((data) => {
-        if (data.jwt) {
-          localStorage.setItem('jwt', data.jwt);
+//  {} ??????????????????????????
+  const handleRegister = ({ email, password }) => {
+    return Auth.register(email, password)
+    .then(() => {
+      setLoggedIn(true);
+      history.push('/sing-in');      
+      setIsLoginAnswerPopupOpen({
+        isOpen: true,
+        image: {success},
+        title: "Вы успешно зарегистрировались!"
+      });
+    });
+  }
 
-          tokenCheck();
-          history.push('/dashboard');
+  const handleLogin = ({ email, password }) => {
+    
+    return Auth.authorize(email, password) 
+
+      .then((data) => {          
+        if (data.jwt) {            
+        localStorage.setItem('jwt', data.jwt);            
+        setLoggedIn(true);
+        tokenCheck();
+        {/*history.push('/dashboard');*/}
+        history.push('/');
         }
       })
-}
+  }
+
+  function onLogout () {
+    localStorage.removeItem('jwt');
+    setLoggedIn(false);
+    setUserData(null);
+    history.push('/sign-in');
+  
+  }
 
 
   function handleAddPlaceSubmit({name, link}) {
@@ -166,7 +193,11 @@ React.useEffect(() => {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
-    setIsLoginAnswerPopupOpen(false);
+    setIsLoginAnswerPopupOpen({
+      isOpen: false,
+      image: "",
+      title: ""
+    });
     setSelectedCard({
       isOpen: false,
       name: "",
@@ -193,11 +224,7 @@ React.useEffect(() => {
 
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
-  }  
-
-  function openInfoTooltip() {
-    setIsLoginAnswerPopupOpen(true);
-  }  
+  }    
 
   function handleUpdateUser({name, about}) {
     api.editProfile({name, about})
@@ -229,10 +256,11 @@ React.useEffect(() => {
 
       <Switch>
           <ProtectedRoute
-            path="/dashboard"
-            loggedIn={handleLogin}
+            /* path="/dashboard" */
+            exact path="/"
+            loggedIn={loggedIn}
             component={Main}
-            userData={setLoggedIn.userData}
+            userData={userData}
             onEditProfile={handleEditProfileClick}
             onAddPlace={handleAddPlaceClick}
             onEditAvatar={handleEditAvatarClick}
@@ -240,16 +268,19 @@ React.useEffect(() => {
             cards={cards}
             onCardLike={handleCardLike}
             onCardDelete={handleCardDelete}
+            
           />         
           <Route path="/sign-up"> {/*для регистрации*/}  
-            <Register />      
+            <Register handleRegister={handleRegister} />      
           </Route>
           <Route path="/sign-in">  {/*для авторизации*/}
             <Login
               handleLogin={handleLogin} />      
           </Route>
-          <Route exact path="/">
-            {!loggedIn ? <Redirect to="/sign-in" /> : <Redirect to="/dashboard" />}
+          {/* exact path="/" ?????????????????????????????????? */}
+          <Route >
+            {/* dashboard ???????????????????????????????????????? */}
+            {!loggedIn ? <Redirect to="/sign-in" /> : <Redirect to="/" />}
           </Route>
         </Switch>  
 
@@ -268,7 +299,7 @@ React.useEffect(() => {
                 isOpen={isLoginAnswerPopupOpen}
                 onClose={closeAllPopups}
                 onCloseOverlay={closePopupOnOverley}
-                onInfoTooltip={openInfoTooltip}   />      
+                  />      
 
         <EditProfilePopup
          isOpen={isEditProfilePopupOpen}
