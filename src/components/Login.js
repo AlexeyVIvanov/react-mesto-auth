@@ -1,73 +1,28 @@
 import React from 'react';
 
-import { useHistory } from 'react-router-dom';
-
-import Header from './Header';
-import * as Auth from '../utils/Auth';
-
 function Login(props) {  
-
-  //const [email, setEmail] = React.useState('');
-  //const [password, setPassword] = React.useState('');
+  
   const [formParams, setFormParams] = React.useState({email: '', password: ''});
-  const [message, setMessage] = React.useState('');
-  const history = useHistory();
-
-  //function handleChangeEmail(evt) {
-  //  setEmail(evt.target.value);
-  //}
-
-  //function handleChangePassword(evt) {
-  //  setPassword(evt.target.value);
-  //}
+    
   const handleChange = (evt) => {
     const {name, value} = evt.target;
     setFormParams((prev) => ({
       ...prev,
       [name]: value
     }));
-  }
-
-  //function handleSubmit(evt) {
-        
-  //  evt.preventDefault();  
-  //  if (
-      //!setEmail ||
-  //     !setPassword){
-  //    return;
-  //  }  
-  //  Auth.authorize(
-      //setEmail, 
-  //    setPassword)
-  //.then((data) => {
-  //  if (data.jwt){
-  //    setPassword({email: '',
-  //      password: ''}
-  //       ,() => {
-  //        props.handleLogin();
-  //        history.push('/dashboard');
-  //    })
-  //  }  
-  //})
-  //.catch(err => console.log(err)); // запускается, если пользователь не найден
-//}
+  }  
 
 const handleSubmit = (evt) => {
   evt.preventDefault();
   if (!formParams.email || !formParams.password){
     return;
   }
-  props.handleLogin({ email: formParams.email, password: formParams.password })
-  
-      {/*.catch(err => {
-        setMessage(err.message);
-      });*/}
-}
-          
+  props.handleLogin({ email: formParams.email, password: formParams.password })  
+      
+}          
 
-    return(
-        <>
-        {/*<Header />*/}
+    return(       
+        
         <section className="popup popup_opened popup_type_register">
           <div className="popup__container popup__container_theme_dark">            
             <form onSubmit={handleSubmit} name="login" className="popup__form popup__form-edit-profile" >
@@ -83,7 +38,7 @@ const handleSubmit = (evt) => {
             </form>
           </div>
         </section>
-        </>
+        
     )
   
 }

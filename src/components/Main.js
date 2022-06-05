@@ -7,7 +7,7 @@ import editAvatar from '../images/edit-avatar.svg';
 import Card from './Card';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import Header from './Header';
+
 import Footer from './Footer';
 
 function Main(props) {
@@ -16,7 +16,7 @@ function Main(props) {
   
   return (
     <>
-    {/*<Header />*/}
+    
     <main>
       <section className="profile">
         <img  className="profile__overlay" src={editAvatar} alt="Карандаш"/>

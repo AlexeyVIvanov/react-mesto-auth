@@ -1,30 +1,11 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
-
-import Header from './Header';
-import * as Auth from '../utils/Auth';
-import InfoTooltip from './InfoTooltip';
-
-import success from '../images/success-icon.svg';
-import fail from '../images/fail-icon.svg';
-
-
+import { Link } from 'react-router-dom';
 
 function Register(props) { 
-
-  //const [email, setEmail] = React.useState('');
-  //const [password, setPassword] = React.useState('');
+  
   const [formParams, setFormParams] = React.useState({email: '', pasword: ''});
-  const [message, setMessage] = React.useState('');
-  const history = useHistory();
-
-  //function handleChangeEmail(evt) {
-  //  setEmail(evt.target.value);
-  //}
-
-  //function handleChangePassword(evt) {
-  //  setPassword(evt.target.value);
-  //}
+  
+  
   const handleChange = (evt) => {
     const {name, value} = evt.target;
     setFormParams((prev) => ({
@@ -32,44 +13,19 @@ function Register(props) {
       [name]: value
     }));
   }
-
-  //function handleSubmit(evt) {    
-   // evt.preventDefault();  
-    
-  //  Auth.register(email, password)
-  //  .then((res) => {
-   //   if(res){ 
-   //     return (               
-   //       <InfoTooltip           
-  //         image={success}
-  //         title="Вы успешно зарегистрировались!"
-  //         /> , () => {
-  //        history.push('/sign-in');
-  //      })
-  //    } else {   
-  //      return (    
-  //        <InfoTooltip
-  //        image={fail}
-  //        title="Что-то пошло не так!
-  //        Попробуйте ещё раз."
-  //         />        
-  //         )}
-  //  });
-  //}
+  
   const handleSubmit = (evt) => {
     evt.preventDefault();
     if (formParams.email || formParams.password) {
       let { email, password } = formParams;
       props.handleRegister({ email, password })
-      {/*.catch(err => {
-        setMessage(err.message);
-      });*/}
+      
     }
   }  
 
     return(
         <>
-        {/*<Header />*/}
+        
         <section className="popup popup_opened popup_type_register">
           <div className="popup__container popup__container_theme_dark">            
             <form onSubmit={handleSubmit} name="register" className="popup__form popup__form-edit-profile" >

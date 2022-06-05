@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Footer from './Footer';
 import Header from './Header';
 import Main from './Main';
 import PopupWithForm from './PopupWithForm';
@@ -11,7 +10,7 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
-import { Route, Switch, Redirect, useHistory, useLocation, Link } from 'react-router-dom';
+import { Route, Switch, Redirect, useHistory, useLocation } from 'react-router-dom';
 
 import Login from './Login';
 import ProtectedRoute from './ProtectedRoute';
@@ -19,8 +18,6 @@ import Register from './Register';
 import InfoTooltip from './InfoTooltip';
 
 import * as Auth from '../utils/Auth';
-import success from '../images/success-icon.svg';
-import fail from '../images/fail-icon.svg';
 
 function App() {
 
@@ -29,8 +26,7 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [isLoginAnswerPopupOpen, setIsLoginAnswerPopupOpen] = React.useState({
     isOpen: false,
-    image: "",
-    title: ""
+    isAnswer: false
   });
   const [selectedCard, setSelectedCard] = React.useState({
     isOpen: false,
@@ -62,15 +58,12 @@ function App() {
           
           setLoggedIn(true);
           setUserData(userData);
-          //setLoggedIn({
-          //  setLoggedIn: true,
-          //  userData
-          //}, () => {
-            //props????????
-          //  history.push("/dashboard");
-          //});
+          
         }
-      }); 
+      })
+      .catch((err) => {
+        console.log(err); // выведем ошибку в консоль
+      }) 
     }
   }
 
@@ -84,19 +77,20 @@ function App() {
     }
   }, [loggedIn, history]);
 
-//  {} ??????????????????????????
+
   const handleRegister = ({ email, password }) => {
     return Auth.register(email, password)
-    .then(() => {
-      //setLoggedIn(true);
+    .then(() => {      
             
       setIsLoginAnswerPopupOpen({
         isOpen: true,
-        image: {success},
-        title: "Вы успешно зарегистрировались!"
+        isAnswer: true
       });
       history.push('/sing-in');
-    });
+    })
+    .catch((err) => {
+      console.log(err); // выведем ошибку в консоль
+    })
     
   }
 
@@ -106,19 +100,21 @@ function App() {
 
       .then((data) => {          
         if (data.token) {  
-          //  'jwt' ????????????????          
+                   
         localStorage.setItem('token', data.token);            
         setLoggedIn(true);
         tokenCheck();
-        {/*history.push('/dashboard');*/}
+        
         history.push('/');
-        } else {
-          setIsLoginAnswerPopupOpen({
-            isOpen: true,
-            image: {fail},
-            title: "Что-то пошло не так! Попробуйте ещё раз."
-          });
         }
+        
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoginAnswerPopupOpen({
+              isOpen: true,
+              isAnswer: false
+            });
       })
   }
 
@@ -127,8 +123,15 @@ function App() {
     setLoggedIn(false);
     setUserData(null);
     history.push('/sign-in');
-  
+    
   }
+
+  function toLogin () {
+    history.push('/sign-in')
+  }
+  function toRegister () {
+    history.push('/sign-up')
+  }  
 
 
   function handleAddPlaceSubmit({name, link}) {
@@ -159,7 +162,7 @@ function App() {
 
   const handleCardDelete = (card) => {
     api.deleteConfirmCard(card._id)
-      //, !isOwn)
+      
       .then(() => {
         setCards(cards.filter(item => item._id !== card._id));
       })
@@ -206,8 +209,7 @@ React.useEffect(() => {
     setIsEditAvatarPopupOpen(false);
     setIsLoginAnswerPopupOpen({
       isOpen: false,
-      image: "",
-      title: ""
+      isAnswer:false
     });
     setSelectedCard({
       isOpen: false,
@@ -235,7 +237,7 @@ React.useEffect(() => {
 
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
-  }    
+  }   
 
   function handleUpdateUser({name, about}) {
     api.editProfile({name, about})
@@ -267,23 +269,23 @@ React.useEffect(() => {
       <Header 
           text={ 
             location.pathname === '/sign-in' 
-              ? 'Зарегистрироваться' 
+              ? 'Регистрация' 
               : location.pathname === '/sign-up' 
               ? 'Войти' 
               : 'Выйти' 
           } 
-          //click={ 
-           // location.pathname === '/' 
-           //   ? onLogout 
-            //  : location.pathname === '/sign-in' 
-            //  ? "/sign-in"               
-            //  : "/sign-up"              
-          //}
+          click={ 
+            location.pathname === '/' 
+              ? onLogout 
+              : location.pathname === '/sign-in' 
+              ? toRegister               
+              : toLogin              
+          }
         />
 
       <Switch>
           <ProtectedRoute
-            /* path="/dashboard" */
+            
             exact path="/"
             loggedIn={loggedIn}
             component={Main}
@@ -304,28 +306,18 @@ React.useEffect(() => {
             <Login
               handleLogin={handleLogin} />      
           </Route>
-          {/* exact path="/" ?????????????????????????????????? */}
+          
           <Route >
-            {/* dashboard ???????????????????????????????????????? */}
+            
             {!loggedIn ? <Redirect to="/sign-in" /> : <Redirect to="/" />}
           </Route>
-        </Switch>  
-
-       {/* <Header />        
-
-        <Main
-              onEditProfile={handleEditProfileClick}
-              onAddPlace={handleAddPlaceClick}
-              onEditAvatar={handleEditAvatarClick}
-              onCardClick={handleCardClick}
-              cards={cards}
-              onCardLike={handleCardLike}
-  onCardDelete={handleCardDelete} />*/}
+        </Switch>         
 
         <InfoTooltip
-                isOpen={isLoginAnswerPopupOpen}
+                isOpen={isLoginAnswerPopupOpen.isOpen}
                 onClose={closeAllPopups}
                 onCloseOverlay={closePopupOnOverley}
+                isAnswer={isLoginAnswerPopupOpen.isAnswer}
                   />      
 
         <EditProfilePopup
@@ -356,9 +348,9 @@ React.useEffect(() => {
           card={selectedCard}
           onClose={closeAllPopups}
           onCloseOverlay={closePopupOnOverley}
-        />    
+        />   
 
-        {/*<Footer /> */}
+        
       </CurrentUserContext.Provider>
     </div>
   </div>
