@@ -12,7 +12,9 @@ function Header(props) {
       <img className="header__logo" src={logo} alt="Логотип"/>
       <nav className="header__login-container">
         <div className="header__login-mail">{email}</div>
-        <Link to="/sign-in" className="header__login-registration">Войти</Link>
+        {/*<Link to="/sign-in" className="header__login-registration">Войти</Link>*/}
+        <Link to={props.click} className="header__login-registration">{props.text}</Link>
+        {/*<button type='button' className="header__login-registration" onClick={props.click}>{props.text}</button>*/}
       </nav>
     </header>    
   );

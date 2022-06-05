@@ -16,7 +16,7 @@ function Main(props) {
   
   return (
     <>
-    <Header />
+    {/*<Header />*/}
     <main>
       <section className="profile">
         <img  className="profile__overlay" src={editAvatar} alt="Карандаш"/>

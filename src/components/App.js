@@ -11,7 +11,7 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
-import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
+import { Route, Switch, Redirect, useHistory, useLocation, Link } from 'react-router-dom';
 
 import Login from './Login';
 import ProtectedRoute from './ProtectedRoute';
@@ -20,6 +20,7 @@ import InfoTooltip from './InfoTooltip';
 
 import * as Auth from '../utils/Auth';
 import success from '../images/success-icon.svg';
+import fail from '../images/fail-icon.svg';
 
 function App() {
 
@@ -43,6 +44,7 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
 
   const history = useHistory();
+  const location = useLocation(); 
   
 
   function tokenCheck () {
@@ -86,14 +88,16 @@ function App() {
   const handleRegister = ({ email, password }) => {
     return Auth.register(email, password)
     .then(() => {
-      setLoggedIn(true);
-      history.push('/sing-in');      
+      //setLoggedIn(true);
+            
       setIsLoginAnswerPopupOpen({
         isOpen: true,
         image: {success},
         title: "Вы успешно зарегистрировались!"
       });
+      history.push('/sing-in');
     });
+    
   }
 
   const handleLogin = ({ email, password }) => {
@@ -101,12 +105,19 @@ function App() {
     return Auth.authorize(email, password) 
 
       .then((data) => {          
-        if (data.jwt) {            
-        localStorage.setItem('jwt', data.jwt);            
+        if (data.token) {  
+          //  'jwt' ????????????????          
+        localStorage.setItem('token', data.token);            
         setLoggedIn(true);
         tokenCheck();
         {/*history.push('/dashboard');*/}
         history.push('/');
+        } else {
+          setIsLoginAnswerPopupOpen({
+            isOpen: true,
+            image: {fail},
+            title: "Что-то пошло не так! Попробуйте ещё раз."
+          });
         }
       })
   }
@@ -253,6 +264,22 @@ React.useEffect(() => {
     <div className="page">
         
       <CurrentUserContext.Provider value={currentUser}>
+      <Header 
+          text={ 
+            location.pathname === '/sign-in' 
+              ? 'Зарегистрироваться' 
+              : location.pathname === '/sign-up' 
+              ? 'Войти' 
+              : 'Выйти' 
+          } 
+          //click={ 
+           // location.pathname === '/' 
+           //   ? onLogout 
+            //  : location.pathname === '/sign-in' 
+            //  ? "/sign-in"               
+            //  : "/sign-up"              
+          //}
+        />
 
       <Switch>
           <ProtectedRoute

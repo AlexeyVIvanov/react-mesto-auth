@@ -1,17 +1,16 @@
 
-export const BASE_URL = 'https://auth.nomoreparties.co/';
+export const BASE_URL = 'https://auth.nomoreparties.co';
 
 const checkResponse = (res) => {
-  if (res.ok) {
-    
+  if (res.ok) {    
     return res.json();
-
   }
-
-  return res.json()
-      .then((data) => {        
-        throw new Error(data.message);
-      });
+  // если ошибка, отклоняем промис
+  return Promise.reject(`Ошибка: ${res.status}`);
+  //return res.json()
+  //    .then((data) => {        
+  //      throw new Error(data.message);
+  //    });
 };
 
 export const register = (email, password) => {
@@ -40,14 +39,14 @@ export const register = (email, password) => {
   //.catch((err) => console.log(err));
 };
 
-export const authorize = (identifier, password) => {
+export const authorize = (email, password) => {
   return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
     headers: {      
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      identifier,
+      email,
       password})
       
   })

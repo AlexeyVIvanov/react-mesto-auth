@@ -69,7 +69,7 @@ function Register(props) {
 
     return(
         <>
-        <Header />
+        {/*<Header />*/}
         <section className="popup popup_opened popup_type_register">
           <div className="popup__container popup__container_theme_dark">            
             <form onSubmit={handleSubmit} name="register" className="popup__form popup__form-edit-profile" >

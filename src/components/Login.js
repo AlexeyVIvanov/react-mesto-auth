@@ -52,8 +52,8 @@ function Login(props) {
   //.catch(err => console.log(err)); // запускается, если пользователь не найден
 //}
 
-const handleSubmit = (e) => {
-  e.preventDefault();
+const handleSubmit = (evt) => {
+  evt.preventDefault();
   if (!formParams.email || !formParams.password){
     return;
   }
@@ -67,7 +67,7 @@ const handleSubmit = (e) => {
 
     return(
         <>
-        <Header />
+        {/*<Header />*/}
         <section className="popup popup_opened popup_type_register">
           <div className="popup__container popup__container_theme_dark">            
             <form onSubmit={handleSubmit} name="login" className="popup__form popup__form-edit-profile" >

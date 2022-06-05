@@ -24,7 +24,7 @@
 @import url(./blocks/header/__login-container/header__login-container.css);
 @import url(./blocks/header/__login-mail/header__login-mail.css);
 @import url(./blocks/header/__logo/header__logo.css);
-@import url(./blocks/header/__registration/header__registration.css);
+@import url(./blocks/header/__login-registration/header__login-registration.css);
 
 @import url(./blocks/page/page.css);
 
