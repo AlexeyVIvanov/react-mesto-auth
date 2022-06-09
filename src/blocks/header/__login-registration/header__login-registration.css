@@ -8,6 +8,8 @@
   color: #FFFFFF;
   background-color: transparent;
   text-decoration: none;
+  border: 0;
+  padding: 0 0 46px;
 }
 
 .header__login-registration:hover {
